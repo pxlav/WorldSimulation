@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class NpcAI : MonoBehaviour
 {
-    [SerializeField] float rayLenght;
-    [SerializeField] bool isDriveForward;
-    [SerializeField] bool isDriveBack;
-    [SerializeField] bool isDriveLeft;
-    [SerializeField] float backTimer;
+    [Header("IMPORTANT")]
+    [SerializeField] bool showRayCasts;
     [SerializeField] bool isStop;
-    [SerializeField] Vector3 dir;
+    [SerializeField] bool isDriveForward;
+    [SerializeField] float rayLenght;
     private void Start()
     {
         rayLenght = 2.5f;
-        backTimer = 0.5f;
         isDriveForward = true;
     }
 
@@ -52,17 +49,17 @@ public class NpcAI : MonoBehaviour
     }
     public void RayCastHitting()
     {
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * rayLenght, Color.blue);
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.back) * rayLenght, Color.blue);
-        Debug.DrawRay(transform.position, transform.TransformDirection(-1.07f, 0, 2.63f), Color.blue);
-        Debug.DrawRay(transform.position, transform.TransformDirection(1.07f, 0, 2.63f), Color.blue);
-        Debug.DrawRay(transform.position, transform.TransformDirection(-1.07f, 0, -2.63f), Color.blue);
-        Debug.DrawRay(transform.position, transform.TransformDirection(1.07f, 0, -2.63f), Color.blue);
-        Debug.DrawRay(transform.position, transform.TransformDirection(1.31f, 0, 0.81f), Color.blue);
-        //Debug.DrawRay(transform.position, transform.TransformDirection(1.31f, 0, -0.81f), Color.blue);
-        //Debug.DrawRay(transform.position, transform.TransformDirection(-1.31f, 0, 0.81f), Color.blue);
-        //Debug.DrawRay(transform.position, transform.TransformDirection(-1.31f, 0, -0.81f), Color.blue);
-
+        if (showRayCasts == true)
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * rayLenght, Color.blue);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.back) * rayLenght, Color.blue);
+            Debug.DrawRay(transform.position, transform.TransformDirection(-1.07f, 0, 2.63f), Color.blue);
+            Debug.DrawRay(transform.position, transform.TransformDirection(1.07f, 0, 2.63f), Color.blue);
+            Debug.DrawRay(transform.position, transform.TransformDirection(-1.07f, 0, -2.63f), Color.blue);
+            Debug.DrawRay(transform.position, transform.TransformDirection(1.07f, 0, -2.63f), Color.blue);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.left) * rayLenght, Color.blue);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right) * rayLenght, Color.blue);
+        }
         RaycastHit hitForward;
         Ray rayForward = new Ray(transform.position, transform.TransformDirection(Vector3.forward));
         if (Physics.Raycast(rayForward, out hitForward, rayLenght))
@@ -116,12 +113,20 @@ public class NpcAI : MonoBehaviour
             Debug.Log("HITTED ON BACK LEFT");
         }
         RaycastHit hitFrontSide;
-        Ray rayFrontSide = new Ray(transform.position, transform.TransformDirection(-1.07f, 0, -2.63f));
-        if (Physics.Raycast(rayFrontSide, out hitFrontSide, rayLenght * 2))
+        Ray rayFrontSide = new Ray(transform.position, transform.TransformDirection(Vector3.right));
+        if (Physics.Raycast(rayFrontSide, out hitFrontSide, rayLenght))
         {
             DriveLeft();
-            Debug.DrawRay(transform.position, transform.TransformDirection(-2.07f, 0, -3.63f), Color.red);
-            Debug.Log("HITTED FRONT SIDE");
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right), Color.red);
+            Debug.Log("HITTED RIGHT FRONT SIDE");
+        }
+        RaycastHit hitSecondFrontSide;
+        Ray raySecondFrontSide = new Ray(transform.position, transform.TransformDirection(Vector3.left));
+        if (Physics.Raycast(raySecondFrontSide, out hitSecondFrontSide, rayLenght))
+        {
+            DriveRight();
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.left), Color.red);
+            Debug.Log("HITTED LEFT FRONT SIDE");
         }
 
 
