@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Control
+  - Entity1
+  - Entity0
+  - Food
   layers:
   - Default
   - TransparentFX
