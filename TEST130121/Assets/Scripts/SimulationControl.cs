@@ -19,7 +19,8 @@ public class SimulationControl : MonoBehaviour
     public TextMeshProUGUI pinkCounterUI;
     public TextMeshProUGUI actualBlueCounterUI;
     public TextMeshProUGUI actualPinkCounterUI;
-    public GameObject spawnObj;
+    public TextMeshProUGUI actualInfectedCounterUI;
+    //public GameObject spawnObj;
     bool canShowSpawn;
     public int birthCounter;
     public int destroyCounter;
@@ -28,6 +29,7 @@ public class SimulationControl : MonoBehaviour
     public int actualPinkCounter;
     public int pinkCounter;
     public int blueCounter;
+    public int infectedCounter;
     private void Start()
     {
         timeSlider.value = 0.1f;
@@ -42,6 +44,7 @@ public class SimulationControl : MonoBehaviour
         entitiesCounterUI.text = birthCounter.ToString();
         destroyCounterUI.text = destroyCounter.ToString();
         actualCounterUI.text = actualEntityCounter.ToString();
+        actualInfectedCounterUI.text = infectedCounter.ToString();
         if (Input.GetKeyDown(KeyCode.P))
         {
             canShowSpawn = !canShowSpawn;
@@ -52,11 +55,11 @@ public class SimulationControl : MonoBehaviour
         }
         if (canShowSpawn == true)
         {
-            spawnObj.SetActive(true);
+            //spawnObj.SetActive(true);
         }
         else
         {
-            spawnObj.SetActive(false);
+            //spawnObj.SetActive(false);
         }
         simulationTime += Time.deltaTime;
         timeUI.text = simulationTime.ToString("0.0");

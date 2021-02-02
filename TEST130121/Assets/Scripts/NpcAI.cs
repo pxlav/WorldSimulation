@@ -8,6 +8,8 @@ public class NpcAI : MonoBehaviour
     [SerializeField] bool isStop;
     [SerializeField] bool isDriveForward;
     [SerializeField] bool canMakeNewEntity;
+    [SerializeField] bool isVirus;
+    [SerializeField] int isVirusCount;
     [SerializeField] float rayLenght;
     [SerializeField] float newEntityTimer;
     [SerializeField] float waitTimer;
@@ -18,6 +20,7 @@ public class NpcAI : MonoBehaviour
     [SerializeField] int newEntityCharacter;
     [SerializeField] GameObject newEntityPrefab0;
     [SerializeField] GameObject newEntityPrefab1;
+    [SerializeField] GameObject newEntityPrefab2;
     [SerializeField] float lifeTime;
     [SerializeField] GameObject scriptsGameObj;
     [SerializeField] SimulationControl m_simControl;
@@ -26,6 +29,7 @@ public class NpcAI : MonoBehaviour
     [SerializeField] float rotatingTimer;
     [SerializeField] float whenRotatingTimer;
     [SerializeField] int wichSideRotating;
+    public bool isInfectedHeritage;
 
     private void Start()
     {
@@ -34,6 +38,7 @@ public class NpcAI : MonoBehaviour
         newEntityTimer = 12.0f;
         newEntityPrefab0 = Resources.Load("newEntity0") as GameObject;
         newEntityPrefab1 = Resources.Load("newEntity1") as GameObject;
+        newEntityPrefab2 = Resources.Load("newEntity2") as GameObject;
         lifeTime = Random.Range(1200, 1400);
         scriptsGameObj = GameObject.FindGameObjectWithTag("Control");
         m_simControl = scriptsGameObj.GetComponent<SimulationControl>();
@@ -43,7 +48,8 @@ public class NpcAI : MonoBehaviour
         whenWaitTimer = Random.Range(4, 16);
         rotatingTimer = Random.Range(0.5f, 1);
         whenRotatingTimer = Random.Range(8, 16);
-        if(entityCharacter == 0)
+        isVirusCount = Random.Range(1, 10);
+        if (entityCharacter == 0)
         {
             m_simControl.pinkCounter++;
             m_simControl.actualPinkCounter++;
@@ -53,11 +59,15 @@ public class NpcAI : MonoBehaviour
             m_simControl.blueCounter++;
             m_simControl.actualBlueCounter++;
         }
+        if(isVirusCount == 6)
+        {
+            m_simControl.infectedCounter++;
+        }
 
     }
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Food")
+        if (other.tag == "Food")
         {
             lifeTime += Random.Range(3, 6);
             Destroy(other.gameObject);
@@ -65,14 +75,22 @@ public class NpcAI : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (isVirusCount == 6 && isInfectedHeritage == false)
+        {
+            isVirus = true;
+        }
+        if(isInfectedHeritage == true)
+        {
+            isVirus = true;
+        }
         if (isRotating == true)
-        {   
+        {
             rotatingTimer -= Time.deltaTime;
-            if(wichSideRotating == 0)
+            if (wichSideRotating == 0)
             {
                 DriveLeft();
             }
-            if(wichSideRotating == 1)
+            if (wichSideRotating == 1)
             {
                 DriveRight();
             }
@@ -110,16 +128,22 @@ public class NpcAI : MonoBehaviour
                 isWaiting = true;
             }
         }
-        lifeTime -= Time.deltaTime;
+        if (isVirus == true)
+        {
+            lifeTime -= Time.deltaTime * 4.5f;
+        }else
+        {
+            lifeTime -= Time.deltaTime;
+        }
         if (lifeTime < 0)
         {
             m_simControl.destroyCounter++;
             m_simControl.actualEntityCounter--;
-            if(entityCharacter == 0)
+            if (entityCharacter == 0)
             {
                 m_simControl.actualBlueCounter--;
             }
-            if(entityCharacter == 1)
+            if (entityCharacter == 1)
             {
                 m_simControl.actualPinkCounter--;
             }
@@ -154,13 +178,17 @@ public class NpcAI : MonoBehaviour
         if (canMakeNewEntity == true)
         {
             newEntityCharacter = Random.Range(0, 2);
-            if (newEntityCharacter == 1)
+            if (newEntityCharacter == 1 && isVirus == false)
             {
                 Instantiate(newEntityPrefab1, transform.position, transform.rotation);
             }
-            if (newEntityCharacter == 0)
+            if (newEntityCharacter == 0 && isVirus == false)
             {
                 Instantiate(newEntityPrefab0, transform.position, transform.rotation);
+            }
+            if (isVirus == true)
+            {
+                Instantiate(newEntityPrefab2, transform.position, transform.rotation);
             }
             newEntityTimer = 10.0f;
         }
